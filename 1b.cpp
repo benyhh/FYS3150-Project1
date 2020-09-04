@@ -4,10 +4,8 @@
 
 using namespace std;
 
-
-int main(int argc, char* argv[])
+int solve(int n)
 {
-	int n = 1000;
 	vector <double> x(n+1);
 	vector <double> a(n,-1);
 	vector <double> b(n,2);
@@ -33,8 +31,14 @@ int main(int argc, char* argv[])
 		b_tilde[i] = b[i]-a[i-1]*c[i-1]/b_tilde[i-1];
 		d_tilde[i] = d[i]-a[i-1]*d_tilde[i-1]/b_tilde[i-1];
 		v[i] = (d_tilde[i-1]-b_tilde[i-1]*v[i-1])/c[2];
+		cout << v[i] << endl;
 	}
 
 	return 0;
+}
 
+int main(int argc, char* argv[])
+{
+	solve(10);
+	return 0;
 }
