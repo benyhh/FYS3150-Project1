@@ -28,6 +28,7 @@ int solve(int n)
 	vector <double> d(n);
 	vector <double> v(n);
 	vector <double> b_tilde(n);
+	vector <double> c_tilde(n);
 	vector <double> d_tilde(n);
 
 	double h = 1/(double(n)+1);
@@ -40,7 +41,8 @@ int solve(int n)
 	}
 
 	//Initial values
-	b_tilde[0]=b[0];
+	b_tilde[0] = b[0];
+	c_tilde[0] = c[0];
 	d_tilde[0] = d[0];
 	v[0]=0;
 
@@ -48,6 +50,7 @@ int solve(int n)
 	for (int i = 1; i<n; i++)
 	{
 		b_tilde[i] = b[i]-a[i-1]*c[i-1]/b_tilde[i-1];
+		c_tilde[i] = c[i]*a[i]/b_tilde[i];
 		d_tilde[i] = d[i]-a[i-1]*d_tilde[i-1]/b_tilde[i-1];
 		v[i] = (d_tilde[i-1]-b_tilde[i-1]*v[i-1])/c[2];
 	}
