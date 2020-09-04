@@ -1,7 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 
-f =  open("num_result_pow6.txt", 'r')
+f =  open("num_result_pow2.txt", 'r')
 f.readline()
 lines = f.readlines()
 x = np.zeros(len(lines))
