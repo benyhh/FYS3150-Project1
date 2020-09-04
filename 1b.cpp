@@ -7,7 +7,7 @@ using namespace std;
 int wfile(int n, 	vector <double> x, 	vector <double> v)
 {
 	int pow = (int)log10(n);
-	string filename = "num_result_pow" + to_string(pow);
+	string filename = "num_result_pow" + to_string(pow) + ".txt";
 	ofstream results;
 	results.open (filename);
 	results << "x           v" << endl;
