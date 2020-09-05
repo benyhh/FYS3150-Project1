@@ -2,7 +2,9 @@
 #include <cmath>
 #include <vector>
 #include <fstream>
+#include <time.h>
 using namespace std;
+
 
 int wfile(int n, 	vector <double> x, 	vector <double> v)
 {
@@ -50,18 +52,16 @@ int solve(int n)
 	{
 		b_tilde[i] = b[i] - a[i-1] * c[i-1] / b_tilde[i-1];
 		d_tilde[i] = d[i] - a[i-1] * d_tilde[i-1] / b_tilde[i-1];
-		c_tilde[i] = c[i]*a[i]/b[i];
 	}
 
 	v[n-1] = d_tilde[n-1]/b_tilde[n-1];
 
 	for (int i = n-2; i > 0; i--)
 	{
-		v[i] = (d_tilde[i]-c_tilde[i]*v[i+1])/b_tilde[i];
-		cout << v[i] << endl;
+		v[i] = (d_tilde[i]-c[i]*v[i+1])/b_tilde[i];
 	}
 	//Write to file
-	wfile(n,x,v);
+	//wfile(n,x,v);
 
 	return 0;
 }
@@ -69,9 +69,13 @@ int solve(int n)
 
 int main(int argc, char* argv[])
 {
-	for (int i=1; i<5; i++)
+	for (int i=1; i<7; i++)
 	{
+		double start = clock();
 		solve(pow(10,i));
+		double finish = clock();
+		double time = (finish - start)/CLOCKS_PER_SEC;
+		cout << "Time used for n = 10^" << i << ": " << time << "s" <<endl;
 	}
 	return 0;
 }
