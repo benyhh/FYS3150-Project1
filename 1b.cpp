@@ -5,6 +5,7 @@
 #include <time.h>
 #include <cstdlib>
 #include <math.h>
+#include "lib.h"
 using namespace std;
 
 int wfile(int n, 	double *x, double *v)
@@ -19,6 +20,63 @@ int wfile(int n, 	double *x, double *v)
 		results << x[i] << " " << v[i] << endl;
 	}
 	results.close();
+	return 0;
+}
+
+int LU(int n)
+{
+	double **A = new double*[n];
+	for(int i = 0; i < n; i++)
+	A[i] = new double[n];
+	int a;
+	int c;
+	int b;
+	a = c = -1;
+	b = 2;
+	A[0][0]=b; A[0][1]=c;
+
+	for (int i = 1; i < n; i++)
+	{
+		for (int j = 0; j < n; j++)
+		{
+			if ( j == i - 1)
+			{
+				A[i][j]=a;
+				A[i][j+1]=b;
+				A[i][j+2]=c;
+			}
+		}
+	}
+	double *B = new double[n];
+	double *x = new double[n+1];
+	double h = 1/(double(n)+1);
+	double hh = 100*h*h;
+	for (int i=0; i<n+1; i++)
+	{
+		x[i]=i*h;
+		B[i]=hh*exp(-10*x[i]);
+	}
+
+
+	int *indx;
+	indx = new int[n];
+	double d;
+	double start = clock();
+	ludcmp(A, n, indx, &d);
+
+	lubksb(A, n, indx, B);
+
+
+
+	double time = (clock() - start)/CLOCKS_PER_SEC;
+	cout << time << endl;
+
+	for (int i = 0; i < n; i++)
+	delete[] A[i];
+
+	delete[] A;
+	delete[] B;
+
 	return 0;
 }
 
@@ -98,8 +156,9 @@ int solve(int n)
 	}
 	double time = (clock()-start)/CLOCKS_PER_SEC;
 	//Write runtime to file
-	wtime(n, time, "times_regular.txt");
+	//wtime(n, time, "times_regular.txt");
 
+	error(x,v,n);
 
 	delete[] x;
 	delete[] d;
@@ -174,25 +233,20 @@ int solve_spec(int n)
 
 int main(int argc, char* argv[])
 {
-	double t = clock();
-	for (int j = 0; j < 100; j++) //Number of times to run
-	{
-		for (int i=1; i<8; i++)
-		{
-			solve(pow(10,i));
-		}
-	}
+	double t = clock(); //Number of times to run
+	//LU(1000);
 
-/*
-	for (int j = 0; j < 1; j++) //Number of times to run
+
+	for (int i=1; i<8; i++) //Choose n gridpoints
 	{
-		for (int i=1; i<8; i++) //Choose n gridpoints
-		{
-			solve_spec(pow(10,i));
-			//cout << "Spec: Time used for n = 10^" << i << ": " << time << "s" <<endl;
-		}
+		solve(pow(10,i));
 	}
-*/
+	for (int i=1; i<8; i++) //Choose n gridpoints
+	{
+		solve_spec(pow(10,i));
+		//cout << "Spec: Time used for n = 10^" << i << ": " << time << "s" <<endl;
+	}
+	*/
 	double tot_time = (clock() - t)/CLOCKS_PER_SEC;
 	//cout << tot_time << endl;
 	return 0;
