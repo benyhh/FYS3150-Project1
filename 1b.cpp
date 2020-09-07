@@ -7,15 +7,14 @@
 #include <math.h>
 using namespace std;
 
-
-int wfile(int n, 	vector <double> x, 	vector <double> v)
+int wfile(int n, 	double *x, double *v)
 {
 	int pow = (int)log10(n);
 	string filename = "num_result_pow" + to_string(pow) + ".txt";
 	ofstream results;
 	results.open (filename);
 	results << "x           v" << endl;
-	for (int i = 0; i < x.size(); i++)
+	for (int i = 0; i < n+1; i++)
 	{
 		results << x[i] << " " << v[i] << endl;
 	}
@@ -41,17 +40,26 @@ int error(double *x,double *v,int n)
 	return 0;
 }
 
+int wtime(int n, double time, string filename)
+{
+	ofstream times;
+	times.open (filename, ios_base::app);
+	times << n << "  " << time << endl;
+	times.close();
+	return 0;
+}
+
+
 int solve(int n)
 {
-	double x[n+1];
-	double a[n];
-	double b[n];
-	double c[n];
-	double d[n];
-	double v[n+1];
-	double b_tilde[n];
-  double c_tilde[n];
-	double d_tilde[n];
+	double *x = new double[n+1];
+	int *a = new int[n];
+	int *b = new int[n];
+	int *c = new int[n];
+	double *d = new double[n];
+	double *v = new double[n+1];
+	double *b_tilde = new double[n];
+	double *d_tilde = new double[n];
 
 	double h = 1/(double(n)+1);
 	double hh = 100*h*h;
@@ -75,11 +83,14 @@ int solve(int n)
 	v[0]=0;
 	v[n]=0;
 	//Solving algorithm
+	double start = clock();
 	for (int i = 1; i < n; i++)
 	{
 		b_tilde[i] = b[i] - a[i-1] * c[i-1] / b_tilde[i-1];
 		d_tilde[i] = d[i] - a[i-1] * d_tilde[i-1] / b_tilde[i-1];
 	}
+	double time = (clock()-start)/CLOCKS_PER_SEC;
+	//wtime(n, time, "times.txt");
 
 	v[n-1] = d_tilde[n-1]/b_tilde[n-1];
 
@@ -89,6 +100,15 @@ int solve(int n)
 	}
 	//Write to file
 	//wfile(n,x,v);
+
+	delete[] x;
+	delete[] d;
+	delete[] v;
+	delete[] b_tilde;
+	delete[] a;
+	delete[] b;
+	delete[] c;
+	delete[] d_tilde;
 
 	return 0;
 }
@@ -101,7 +121,6 @@ int solve_spec(int n)
 	double *d = new double[n];
 	double *v = new double[n+1];
 	double *b_tilde = new double[n];
-  double *c_tilde = new double[n];
 	double *d_tilde = new double[n];
 
 	double h = 1/(double(n)+1);
@@ -121,11 +140,15 @@ int solve_spec(int n)
 	//Solving algorithm
 
 	int ac = a*c;
+
+	double start = clock();
 	for (int i = 1; i < n; i++)
 	{
 		b_tilde[i] = b - ac / b_tilde[i-1];
 		d_tilde[i] = d[i] - a * d_tilde[i-1] / b_tilde[i-1];
 	}
+	double time = (clock()-start)/CLOCKS_PER_SEC;
+	//wtime(n, time, "times_spec.txt");
 
 	v[n-1] = d_tilde[n-1]/b_tilde[n-1];
 
@@ -135,14 +158,13 @@ int solve_spec(int n)
 	}
 	//Write to file
 	//wfile(n,x,v);
-	error(x,v,n);
+	//error(x,v,n);
 
 
 	delete[] x;
 	delete[] d;
 	delete[] v;
 	delete[] b_tilde;
-	delete[] c_tilde;
 	delete[] d_tilde;
 
 	return 0;
@@ -150,28 +172,22 @@ int solve_spec(int n)
 
 int main(int argc, char* argv[])
 {
-	double time = clock();
-	/*
-	for (int i=1; i<6; i++)
-	{
-		double start = clock();
-		solve(pow(10,i));
-		double finish = clock();
-		double time = (finish - start)/CLOCKS_PER_SEC;
-		cout << "Time used for n = 10^" << i << ": " << time << "s" <<endl;
-	}
+	double t = clock();
+/*
+		for (int i=1; i<8; i++)
+		{
+			solve(pow(10,i));
+		}
 */
 
 	for (int i=1; i<8; i++)
 	{
-		double start = clock();
 		solve_spec(pow(10,i));
-		double finish = clock();
-		double time = (finish - start)/CLOCKS_PER_SEC;
 		//cout << "Spec: Time used for n = 10^" << i << ": " << time << "s" <<endl;
 	}
 
-	double tot_time = (clock() - time)/CLOCKS_PER_SEC;
-	cout << tot_time << endl;
+
+	double tot_time = (clock() - t)/CLOCKS_PER_SEC;
+	//cout << tot_time << endl;
 	return 0;
 }

@@ -1,7 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 
-for j in range(1,4):
+for j in range(1,5):
     f =  open("num_result_pow%i.txt" %(j), 'r')
     f.readline()
     lines = f.readlines()
@@ -28,5 +28,7 @@ plt.legend()
 plt.title('Solution of set of linear equations')
 plt.xlabel('x')
 plt.ylabel('y')
-plt.savefig('1b_plot', dpi=400)
+#plt.ylim(0.6,0.8)
+#plt.xlim(0,0.6)
+#plt.savefig('1b_closeplot', dpi=400)
 plt.show()
